@@ -26,7 +26,7 @@ class App
         if(!isset($this->config['env'])) {
             return 'production';
         }
-        return $this->config['env'];
+        return $this->isTestMode() ? 'test' : $this->config['env'];
     }
 
     public function getLogPath(): string
@@ -45,5 +45,13 @@ class App
     public function getServerTime(): DateTimeInterface
     {
         return new DateTime('now', new DateTimeZone('Europe/Moscow'));
+    }
+
+    public function isTestMode()
+    {
+        if($this->isRunningFromConsole() && defined('PHPUNIT_RUNNING') && PHPUNIT_RUNNING == true) {
+           return true;
+        }
+        return false;
     }
 }

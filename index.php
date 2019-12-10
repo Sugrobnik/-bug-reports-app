@@ -6,9 +6,4 @@ require_once __DIR__ . '/Src/Exception/exception.php';
 
 header('Content-Type: text/plain', true);
 
-$logger = new \App\Logger\Logger();
-$logger->log(
-    \App\Logger\LogLevel::EMERGENCY, 'There is an emergency', ['exception' => 'exception occuped']
-);
-$logger->info('User account created successfully', ['id' => 5]);
 
