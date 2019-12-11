@@ -1,20 +1,25 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tests\Units;
+
+
 use App\Contracts\DatabaseConnectionInterface;
+use App\Database\MySQLiConnection;
 use App\Database\PDOConnection;
 use App\Exception\MissingArgumentException;
 use App\Helpers\Config;
 use PHPUnit\Framework\TestCase;
 
-class DataBaseConnectionTest extends TestCase
+class DatabaseConnectionTest extends TestCase
 {
-    public function testItThrowMissingArgumentExceptionWithWrongCredentialsKeys()
+
+    public function testItThrowMissingArgumentExceptionWithWrongCredentialKeys()
     {
         self::expectException(MissingArgumentException::class);
         $credentials = [];
         $pdoHandler = new PDOConnection($credentials);
-        
     }
 
     public function testItCanConnectToDatabaseWithPdoApi()
@@ -25,18 +30,31 @@ class DataBaseConnectionTest extends TestCase
         return $pdoHandler;
     }
 
-    //** @depends testItCanConnectToDatabaseWithPdoApi */
-
-    public function testItIsValidPdoConnection(DatabaseConnectionInterface $handler)
+    /** @depends testItCanConnectToDatabaseWithPdoApi */
+    public function testItIsAValidPdoConnection(DatabaseConnectionInterface $handler)
     {
         self::assertInstanceOf(\PDO::class, $handler->getConnection());
+    }
+
+    public function testItCanConnectToDatabaseWithMysqliApi()
+    {
+        $credentials = $this->getCredentials('mysqli');
+        $handler = (new MySQLiConnection($credentials))->connect();
+        self::assertInstanceOf(DatabaseConnectionInterface::class, $handler);
+        return $handler;
+    }
+
+    /** @depends testItCanConnectToDatabaseWithMysqliApi */
+    public function testItIsAValidMysqliConnection(DatabaseConnectionInterface $handler)
+    {
+        self::assertInstanceOf(\mysqli::class, $handler->getConnection());
     }
 
     private function getCredentials(string $type)
     {
         return array_merge(
-            Config::get('database', $type), 
-            ['name' => 'blog_testing']
+            Config::get('database', $type),
+            ['db_name' => 'bug_app_testing']
         );
     }
 }
