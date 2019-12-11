@@ -45,7 +45,7 @@ class LoggerTest extends TestCase
     public function testItThrowsInInvalidLogLevelArgumentExceptionWhenGivenWrongLogLevel()
     {
         self::expectException(InvalidLogLevelArgument::class);
-        $this->logger->log('invalid', 'Testing invlalid log level');
+        $this->logger->log('invalid', 'Testing invalid log level');
     }
     
 }
